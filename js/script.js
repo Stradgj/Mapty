@@ -87,8 +87,8 @@ class App {
     deleteAllBth.addEventListener('click', this._showDeleteField);
     deleteApproveBth.addEventListener('click', this._deleteAllWorkouts);
     rejectBth.addEventListener('click', this._closeDeleteField);
-    redactBth.addEventListener('click', this._redactWorkout);
-    deleteBth.addEventListener('click', this._deleteWorkout);
+    redactBth.addEventListener('click', this._redactWorkout.bind(this));
+    deleteBth.addEventListener('click', this._deleteWorkout.bind(this));
   }
 
   _getPosition() {
@@ -299,9 +299,12 @@ class App {
       this._renderWorkout(work);
     });
   }
-  reset() {
+  _reset() {
     localStorage.removeItem('workouts');
     location.reload();
+  }
+  _showDeleteField(){
+    deleteField.style.left = "0"
   }
 }
 
