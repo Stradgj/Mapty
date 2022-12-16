@@ -4,6 +4,7 @@
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const form = document.querySelector('.form');
+const sidebar = document.querySelector(".sidebar")
 const containerWorkouts = document.querySelector('.workouts');
 const inputType = document.querySelector('.form__input--type');
 const inputDistance = document.querySelector('.form__input--distance');
@@ -81,12 +82,17 @@ class App {
     this._getLocalStorage();
 
     // Attach event handlers
+    if(this.#workouts.length === 0){
+      deleteAllBth.style.opacity = "0";
+      deleteAllBth.style.pointerEvents = "0";
+      deleteAllBth.style.visibility= "none";
+    }
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
     deleteAllBth.addEventListener('click', this._showDeleteField);
     deleteApproveBth.addEventListener('click', this._deleteAllWorkouts);
-    rejectBth.addEventListener('click', this._closeDeleteField);
+    rejectBth.addEventListener('click', this._showSidebar);
     redactBth.addEventListener('click', this._redactWorkout.bind(this));
     deleteBth.addEventListener('click', this._deleteWorkout.bind(this));
   }
@@ -155,7 +161,12 @@ class App {
     const duration = +inputDuration.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
-
+    // Show delete button
+    if(this.#workouts.length === 0){
+      deleteAllBth.style.opacity = "1";
+      deleteAllBth.style.pointerEvents = "1";
+      deleteAllBth.style.visibility= "visible";
+    }
     // If workout running, create running obj
     if (type === 'running') {
       const cadence = +inputCadence.value;
@@ -273,7 +284,7 @@ class App {
 
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
-
+    console.log(e.target.closest('.workout'));
     if (!workoutEl) return;
     const workout = this.#workouts.find(
       work => work.id === workoutEl.dataset.id
@@ -304,7 +315,16 @@ class App {
     location.reload();
   }
   _showDeleteField(){
-    deleteField.style.left = "0"
+    deleteField.style.display = "flex";
+    sidebar.style.display = "none";
+  }
+  _showSidebar(){
+    deleteField.style.display = "none";
+    sidebar.style.display = "flex";
+  }
+  _deleteAllWorkouts(){
+    app._reset();
+    app._showSidebar();
   }
 }
 
