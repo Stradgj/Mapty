@@ -10,6 +10,12 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
+const redactBth = document.querySelector('.redact__bth');
+const deleteBth = document.querySelector('.delete__bth');
+const deleteAllBth = document.querySelector('.delete-all__btn');
+const deleteField = document.querySelector('.delete-approvement');
+const rejectBth = document.querySelector('.reject');
+const deleteApproveBth = document.querySelector('.delete');
 
 class Workout {
   date = new Date();
@@ -78,6 +84,11 @@ class App {
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    deleteAllBth.addEventListener('click', this._showDeleteField);
+    deleteApproveBth.addEventListener('click', this._deleteAllWorkouts);
+    rejectBth.addEventListener('click', this._closeDeleteField);
+    redactBth.addEventListener('click', this._redactWorkout);
+    deleteBth.addEventListener('click', this._deleteWorkout);
   }
 
   _getPosition() {
@@ -202,6 +213,17 @@ class App {
     let html = `
     <li class="workout workout--${workout.type}" data-id="${workout.id}">
     <h2 class="workout__title">${workout.description}</h2>
+    <div class="tweaks__buttons">
+            <button class="tweaks__bth redact__bth">
+              <ion-icon class="tweaks__icon" name="create-outline"></ion-icon>
+            </button>
+            <button class="tweaks__bth delete__bth">
+              <ion-icon
+                class="tweaks__icon"
+                name="close-circle-outline"
+              ></ion-icon>
+            </button>
+          </div>
     <div class="workout__details">
       <span class="workout__icon">${
         workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
