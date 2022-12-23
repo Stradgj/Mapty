@@ -1,7 +1,6 @@
 'use strict';
 
 // prettier-ignore
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const form = document.querySelector('.form');
 const sidebar = document.querySelector(".sidebar")
@@ -11,12 +10,11 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
-const redactBth = document.querySelector('.redact__bth');
-const deleteBth = document.querySelector('.delete__bth');
 const deleteAllBth = document.querySelector('.delete-all__btn');
 const deleteField = document.querySelector('.delete-approvement');
 const rejectBth = document.querySelector('.reject');
 const deleteApproveBth = document.querySelector('.delete');
+
 
 class Workout {
   date = new Date();
@@ -32,11 +30,11 @@ class Workout {
     //  prettier-ignore
     const months = ['January', 'February','March','April','May','June','July',
     'August','September','October','November','December'];
-
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
-    } ${this.date.getDay()}`;
+    } ${this.date.getDate()}`;
   }
+
 }
 
 class Running extends Workout {
@@ -72,7 +70,7 @@ class App {
   #map;
   #mapEvent;
   #mapZoomLevel = 13;
-  #workouts = [];
+  workouts = [];
 
   constructor() {
     // Get user position
@@ -81,20 +79,18 @@ class App {
     // Get local storage
     this._getLocalStorage();
 
-    // Attach event handlers
-    if(this.#workouts.length === 0){
+    if(this.workouts.length === 0){
       deleteAllBth.style.opacity = "0";
-      deleteAllBth.style.pointerEvents = "0";
-      deleteAllBth.style.visibility= "none";
+      deleteAllBth.style.pointerEvents = "none";
+      deleteAllBth.style.visibility= "hidden";
     }
+    // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
     deleteAllBth.addEventListener('click', this._showDeleteField);
     deleteApproveBth.addEventListener('click', this._deleteAllWorkouts);
     rejectBth.addEventListener('click', this._showSidebar);
-    redactBth.addEventListener('click', this._redactWorkout.bind(this));
-    deleteBth.addEventListener('click', this._deleteWorkout.bind(this));
   }
 
   _getPosition() {
@@ -119,7 +115,7 @@ class App {
     }).addTo(this.#map);
     this.#map.on('click', this._showForm.bind(this));
 
-    this.#workouts.forEach(work => {
+    this.workouts.forEach(work => {
       this._renderWorkoutMarker(work);
     });
   }
@@ -162,9 +158,9 @@ class App {
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
     // Show delete button
-    if(this.#workouts.length === 0){
+    if(this.workouts.length === 0){
       deleteAllBth.style.opacity = "1";
-      deleteAllBth.style.pointerEvents = "1";
+      deleteAllBth.style.pointerEvents = "all";
       deleteAllBth.style.visibility= "visible";
     }
     // If workout running, create running obj
@@ -188,10 +184,10 @@ class App {
       )
         return alert('Inputs have to be positive numbers');
 
-      workout = new Cycling([lat, lng], distance, duration, elevation);
+      workout = new Cycling([lat, lng], distance, duration, elevation)
     }
     // Add new obj to workout arr
-    this.#workouts.push(workout);
+    this.workouts.push(workout);
     // Render workout on map as marker
     this._renderWorkoutMarker(workout);
     // Render workout on the list
@@ -223,70 +219,77 @@ class App {
   _renderWorkout(workout) {
     let html = `
     <li class="workout workout--${workout.type}" data-id="${workout.id}">
-    <h2 class="workout__title">${workout.description}</h2>
-    <div class="tweaks__buttons">
-            <button class="tweaks__bth redact__bth">
-              <ion-icon class="tweaks__icon" name="create-outline"></ion-icon>
-            </button>
-            <button class="tweaks__bth delete__bth">
-              <ion-icon
-                class="tweaks__icon"
-                name="close-circle-outline"
-              ></ion-icon>
-            </button>
-          </div>
-    <div class="workout__details">
-      <span class="workout__icon">${
-        workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
-      }</span>
-      <span class="workout__value">${workout.distance}</span>
-      <span class="workout__unit">km</span>
-    </div>
-    <div class="workout__details">
-      <span class="workout__icon">⏱</span>
-      <span class="workout__value">${workout.duration}</span>
-      <span class="workout__unit">min</span>
-    </div>
+      <div class='workout__content'>
+        <h2 class="workout__title">${workout.description}</h2>
+        <div class="tweaks__buttons">
+                <button class="tweaks__btn redact__btn">
+                  <ion-icon class="tweaks__icon" name="create-outline"></ion-icon>
+                </button>
+                <button class="tweaks__btn delete__btn">
+                  <ion-icon
+                    class="tweaks__icon"
+                    name="close-circle-outline"
+                  ></ion-icon>
+                </button>
+              </div>
+        <div class="workout__details">
+          <span class="workout__icon">${
+            workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
+          }</span>
+          <span class="workout__value">${workout.distance}</span>
+          <span class="workout__unit">km</span>
+        </div>
+        <div class="workout__details">
+          <span class="workout__icon">⏱</span>
+          <span class="workout__value">${workout.duration}</span>
+          <span class="workout__unit">min</span>
+        </div>
     `;
 
     if (workout.type === 'running') {
       html += `
-        <div class="workout__details">
-          <span class="workout__icon">⚡️</span>
-          <span class="workout__value">${workout.pace.toFixed(1)}</span>
-          <span class="workout__unit">min/km</span>
+          <div class="workout__details">
+            <span class="workout__icon">⚡️</span>
+            <span class="workout__value">${workout.pace.toFixed(1)}</span>
+            <span class="workout__unit">min/km</span>
+          </div>
+          <div class="workout__details">
+            <span class="workout__icon">🦶🏼</span>
+            <span class="workout__value">${workout.cadence}</span>
+            <span class="workout__unit">spm</span>
+          </div>
         </div>
-        <div class="workout__details">
-          <span class="workout__icon">🦶🏼</span>
-          <span class="workout__value">${workout.cadence}</span>
-          <span class="workout__unit">spm</span>
-        </div>
-      </li>
       `;
     }
     if (workout.type === 'cycling') {
       html += `
+          <div class="workout__details">
+          <span class="workout__icon">⚡️</span>
+          <span class="workout__value">${workout.speed.toFixed(1)}</span>
+          <span class="workout__unit">km/h</span>
+        </div>
         <div class="workout__details">
-        <span class="workout__icon">⚡️</span>
-        <span class="workout__value">${workout.speed.toFixed(1)}</span>
-        <span class="workout__unit">km/h</span>
-      </div>
-      <div class="workout__details">
-        <span class="workout__icon">⛰</span>
-        <span class="workout__value">${workout.elevationGain}</span>
-        <span class="workout__unit">m</span>
-      </div>
-    </li>`;
+          <span class="workout__icon">⛰</span>
+          <span class="workout__value">${workout.elevationGain}</span>
+          <span class="workout__unit">m</span>
+        </div>
+      </div>`;
     }
+    html+=` <div class='workout-delete__field'>
+            <h2 class='workout-delete__title'>You're going to delete this workout</h2>
+            <button class='delete-workout__btn'>Delete</button>
+            <button class='keep-workout__btn'>Reject</button>
+          </div>
+        </li>`
 
     form.insertAdjacentHTML('afterend', html);
+    this._bthEventHandler()
   }
 
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
-    console.log(e.target.closest('.workout'));
     if (!workoutEl) return;
-    const workout = this.#workouts.find(
+    const workout = this.workouts.find(
       work => work.id === workoutEl.dataset.id
     );
 
@@ -297,18 +300,20 @@ class App {
       },
     });
   }
+
   _setLocaleStorage() {
-    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+    localStorage.setItem('workouts', JSON.stringify(this.workouts));
   }
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workouts'));
 
     if (!data) return;
 
-    this.#workouts = data;
-    this.#workouts.forEach(work => {
+    this.workouts = data;
+    this.workouts.forEach(work => {
       this._renderWorkout(work);
     });
+
   }
   _reset() {
     localStorage.removeItem('workouts');
@@ -325,6 +330,37 @@ class App {
   _deleteAllWorkouts(){
     app._reset();
     app._showSidebar();
+  }
+  _bthEventHandler(){
+
+    const redactBtn = document.querySelector('.redact__btn');
+    const deleteBtn = document.querySelector('.delete__btn');
+    const workoutDeleteBtn = document.querySelector('.delete-workout__btn');
+    const workoutKeepBtn = document.querySelector('.keep-workout__btn');
+    redactBtn.addEventListener('click',this._redactWorkout.bind(this));
+    deleteBtn.addEventListener('click',this._openDeletingWorkoutField.bind(this));
+    workoutDeleteBtn.addEventListener("click",this._deleteWorkout);
+    workoutKeepBtn.addEventListener("click",this._closeDeletingWorkoutField);
+  }
+  _openDeletingWorkoutField(e){
+    const workout = e.target.closest('.workout');
+    workout.classList.add('deleting');
+  }
+  _closeDeletingWorkoutField(e){
+    const workout = e.target.closest('.workout');
+    workout.classList.remove('deleting');
+  }
+  _redactWorkout(){
+
+  }
+  _deleteWorkout(e){
+    const workout = e.target.closest(".workout");
+    const workoutID = workout.getAttribute("data-id");
+    let data = JSON.parse(localStorage.getItem('workouts'));
+    //delete workout from local storage
+    this.workouts = data.filter(workout =>workout.id !== workoutID)
+    localStorage.setItem('workouts', JSON.stringify(this.workouts));
+    location.reload()
   }
 }
 

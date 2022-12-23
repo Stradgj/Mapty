@@ -8,6 +8,7 @@
   --color-light--2: #ececec;
   --color-light--3: rgb(214, 222, 224);
   --color-red-1: #f03e3e;
+  --color-green-1: #51cf66;
 }
 
 * {
@@ -112,6 +113,9 @@ a:visited {
   padding: 1.5rem 2.25rem;
   margin-bottom: 1.75rem;
   cursor: pointer;
+  transition: all 0.3s;
+}
+.workout__content{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 0.75rem 1.5rem;
@@ -147,11 +151,53 @@ a:visited {
 .delete-all__btn:active {
   background-color: var(--color-dark--1);
 }
+.workout-delete__field{
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  column-gap: 1rem;
+  row-gap: 0.5rem;
+}
+.workout-delete__title{
+  grid-column: span 2;
+}
+.delete-workout__btn,.keep-workout__btn{
 
-.workout__title {
+  font-family: 'Manrope', sans-serif;
+  border: none;
+  text-transform: uppercase;
+  font-weight: 700;
+  background-color: var(--color-dark--1) ;
+  color: var(--color-light--2);
+  padding: 0.8rem 2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  grid-row:2 ;
+}
+.delete-workout__btn{
+  grid-column: 1;
+}
+.keep-workout__btn{
+  grid-column: 2;
+}
+.delete-workout__btn:hover{
+  background-color: var(--color-red-1);
+}
+.keep-workout__btn:hover{
+  background-color: var(--color-green-1);
+}
+
+.workout__title,.workout-delete__title {
   font-size: 1.7rem;
   font-weight: 600;
   grid-column: 1 / 4;
+}
+.deleting .workout__content{
+  display: none;
+}
+.deleting .workout-delete__field{
+  display: grid;
 }
 .tweaks__buttons {
   display: flex;
@@ -159,7 +205,7 @@ a:visited {
   justify-content: flex-end;
   gap: 1rem;
 }
-.tweaks__bth {
+.tweaks__btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -171,10 +217,10 @@ a:visited {
   border-radius: 4px;
   transition: 0.2s all;
 }
-.tweaks__bth:hover {
+.tweaks__btn:hover {
   background-color: var(--color-light--1);
 }
-.tweaks__bth:active {
+.tweaks__btn:active {
   background-color: var(--color-dark--2);
 }
 .tweaks__icon {
