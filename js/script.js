@@ -199,7 +199,9 @@ class App {
   }
 
   _renderWorkoutMarker(workout) {
-    L.marker(workout.coords)
+    L.marker(workout.coords,{
+      alt: `marker-${workout.id}`
+    })
       .addTo(this.#map)
       .bindPopup(
         L.popup({
@@ -207,7 +209,7 @@ class App {
           minWidth: 100,
           autoClose: false,
           closeOnClick: false,
-          className: `${workout.type}-popup`,
+          className: `${workout.type}-popup popup-${workout.id}`,
         })
       )
       .setPopupContent(
@@ -259,6 +261,35 @@ class App {
             <span class="workout__unit">spm</span>
           </div>
         </div>
+                  <form class='workout-redact__field '>
+            <h2 class="workout__title">${workout.description}</h2>
+            <div class="tweaks__buttons">
+              <button class="tweaks__btn confirm-redact__btn">
+                <ion-icon
+                  class="tweaks__icon"
+                  name="checkmark-outline"
+                ></ion-icon>
+              </button>
+              <button class="tweaks__btn cancel-redact__btn">
+                <ion-icon
+                  class="tweaks__icon"
+                  name="close-outline"
+                ></ion-icon>
+              </button>
+            </div>
+            <div class="form-details">
+              <label class='redact-label'>🏃‍♂️</label>
+              <input class='redact-input distance-form' placeholder='km' value='${workout.distance}'>
+            </div>
+            <div class="form-details">
+              <label class='redact-label'>⏱</label>
+              <input class='redact-input duration-form' placeholder='min' value='${workout.duration}'>
+            </div>
+            <div class="form-details">
+              <label class='redact-label'>🦶🏼</label>
+              <input class='redact-input cadence-form' placeholder='spm' value='${workout.cadence}'>
+            </div>
+          </form>
       `;
     }
     if (workout.type === 'cycling') {
@@ -273,7 +304,37 @@ class App {
           <span class="workout__value">${workout.elevationGain}</span>
           <span class="workout__unit">m</span>
         </div>
-      </div>`;
+      </div>
+      <form class='workout-redact__field '>
+            <h2 class="workout__title">${workout.description}</h2>
+            <div class="tweaks__buttons">
+              <button class="tweaks__btn confirm-redact__btn">
+                <ion-icon
+                  class="tweaks__icon"
+                  name="checkmark-outline"
+                ></ion-icon>
+              </button>
+              <button class="tweaks__btn cancel-redact__btn">
+                <ion-icon
+                  class="tweaks__icon"
+                  name="close-outline"
+                ></ion-icon>
+              </button>
+            </div>
+            <div class="form-details">
+              <label class='redact-label'>🏃‍♂️</label>
+              <input class='redact-input distance-form' placeholder='km' value='${workout.distance}'>
+            </div>
+            <div class="form-details">
+              <label class='redact-label'>⏱</label>
+              <input class='redact-input duration-form' placeholder='min' value='${workout.duration}'>
+            </div>
+            <div class="form-details">
+              <label class='redact-label'>⛰</label>
+              <input class='redact-input elevation-gain-form' placeholder='m' value='${workout.elevationGain}'>
+            </div>
+          </form>
+     `;
     }
     html+=` <div class='workout-delete__field'>
             <h2 class='workout-delete__title'>You're going to delete this workout</h2>
@@ -337,23 +398,70 @@ class App {
     const deleteBtn = document.querySelector('.delete__btn');
     const workoutDeleteBtn = document.querySelector('.delete-workout__btn');
     const workoutKeepBtn = document.querySelector('.keep-workout__btn');
-    redactBtn.addEventListener('click',this._redactWorkout.bind(this));
-    deleteBtn.addEventListener('click',this._openDeletingWorkoutField.bind(this));
+    const confirmRedactButton = document.querySelector(".confirm-redact__btn")
+    const cancelRedactButton = document.querySelector(".cancel-redact__btn")
+    redactBtn.addEventListener("click",this._openRedactingWorkoutField);
+    confirmRedactButton.addEventListener('click',this._redactWorkout.bind(this));
+    cancelRedactButton.addEventListener('click',this._closeRedactingWorkoutField);
+    deleteBtn.addEventListener('click',this._openDeletingWorkoutField);
     workoutDeleteBtn.addEventListener("click",this._deleteWorkout.bind(this));
     workoutKeepBtn.addEventListener("click",this._closeDeletingWorkoutField);
   }
   _openDeletingWorkoutField(e){
+    e.preventDefault()
     const workout = e.target.closest('.workout');
     workout.classList.add('deleting');
   }
   _closeDeletingWorkoutField(e){
+    e.preventDefault()
     const workout = e.target.closest('.workout');
     workout.classList.remove('deleting');
   }
-  _redactWorkout(){
-
+  _openRedactingWorkoutField(e){
+    e.preventDefault()
+    const workout = e.target.closest('.workout');
+    workout.classList.add('redacting');
+  }
+  _closeRedactingWorkoutField(e){
+    e.preventDefault()
+    const workout = e.target.closest('.workout');
+    workout.classList.remove('redacting');
+  }
+  _redactWorkout(e){
+    e.preventDefault()
+    const workout = e.target.closest(".workout");
+    const workoutID = workout.getAttribute("data-id");
+    const distance = workout.children[1].children[2].children[1].value;
+    const duration = workout.children[1].children[3].children[1].value;
+    if(workout.classList.contains('workout--running')){
+      const cadence = workout.children[1].children[4].children[1].value;
+      this.#workouts = this.#workouts.map(workout =>{
+        if(workout.id === workoutID){
+          workout.cadence = cadence;
+          workout.duration = duration;
+          workout.distance = distance;
+          workout.pace = duration/distance;
+        }
+        return workout;
+      })
+    }
+    if(workout.classList.contains('workout--cycling')){
+      const elevationGain = workout.children[1].children[4].children[1].value;
+      this.#workouts = this.#workouts.map(workout =>{
+        if(workout.id === workoutID){
+          workout.elevationGain = elevationGain
+          workout.duration = duration;
+          workout.distance = distance;
+          workout.speed =  distance / (duration / 60);
+        }
+        return workout;
+      })
+    }
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+    location.reload()
   }
   _deleteWorkout(e){
+    e.preventDefault()
     const workout = e.target.closest(".workout");
     const workoutID = workout.getAttribute("data-id");
     let data = JSON.parse(localStorage.getItem('workouts'));
@@ -361,7 +469,7 @@ class App {
     //delete workout from local storage
     this.#workouts = data.filter(workout =>workout.id !== workoutID)
     localStorage.setItem('workouts', JSON.stringify(this.#workouts));
-    //reload page
+
     location.reload()
   }
 }

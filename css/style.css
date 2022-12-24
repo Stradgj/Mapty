@@ -4,6 +4,7 @@
 
   --color-dark--1: #2d3439;
   --color-dark--2: #42484d;
+  --color-dark--3: #868e96;
   --color-light--1: #aaa;
   --color-light--2: #ececec;
   --color-light--3: rgb(214, 222, 224);
@@ -112,14 +113,22 @@ a:visited {
   border-radius: 5px;
   padding: 1.5rem 2.25rem;
   margin-bottom: 1.75rem;
-  cursor: pointer;
   transition: all 0.3s;
+  max-height: 9.269rem;
+  overflow: hidden;
 }
 .workout__content{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 0.75rem 1.5rem;
 }
+
+.workout-redact__field{
+  display: none;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 0.75rem 1.5rem;
+}
+
 .workout--running {
   border-left: 5px solid var(--color-brand--2);
 }
@@ -144,6 +153,39 @@ a:visited {
   width: 10rem;
   border-radius: 4px;
   transition: 0.3s all;
+}
+.form-details{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.redact-label{
+  font-size: 1.8rem;
+  margin-right:0.2rem ;
+}
+
+.redact-input{
+  font-size: 1.4rem;
+  color: var(--color-light--2);
+  max-width: 5rem;
+  background-color: var(--color-dark--1);
+  border-radius: 5px;
+  padding: 0.5rem 0.5rem;
+  border: none;
+  transition: all 0.3s;
+}
+.redact-input:focus{
+  outline: none;
+  background-color: var(--color-dark--3);
+}
+.redact-input:focus::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--color-light--3);
+  opacity: 1; /* Firefox */
+}
+
+.redact-input:focus:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: var(--color-light--3);
 }
 .delete-all__btn:hover {
   background-color: var(--color-dark--2);
@@ -197,6 +239,13 @@ a:visited {
   display: none;
 }
 .deleting .workout-delete__field{
+  display: grid;
+}
+
+.redacting .workout__content{
+  display: none;
+}
+.redacting .workout-redact__field{
   display: grid;
 }
 .tweaks__buttons {
