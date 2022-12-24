@@ -29,7 +29,7 @@ class Workout {
   _setDescription() {
     //  prettier-ignore
     const months = ['January', 'February','March','April','May','June','July',
-    'August','September','October','November','December'];
+      'August','September','October','November','December'];
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
@@ -70,7 +70,7 @@ class App {
   #map;
   #mapEvent;
   #mapZoomLevel = 13;
-  workouts = [];
+  #workouts = [];
 
   constructor() {
     // Get user position
@@ -79,7 +79,7 @@ class App {
     // Get local storage
     this._getLocalStorage();
 
-    if(this.workouts.length === 0){
+    if(this.#workouts.length === 0){
       deleteAllBth.style.opacity = "0";
       deleteAllBth.style.pointerEvents = "none";
       deleteAllBth.style.visibility= "hidden";
@@ -115,7 +115,7 @@ class App {
     }).addTo(this.#map);
     this.#map.on('click', this._showForm.bind(this));
 
-    this.workouts.forEach(work => {
+    this.#workouts.forEach(work => {
       this._renderWorkoutMarker(work);
     });
   }
@@ -128,9 +128,9 @@ class App {
   _hideForm() {
     inputCadence.value =
       inputDistance.value =
-      inputDuration.value =
-      inputElevation.value =
-        '';
+        inputDuration.value =
+          inputElevation.value =
+            '';
     form.style.display = 'none';
     form.classList.add('hidden');
     setTimeout(() => {
@@ -158,7 +158,7 @@ class App {
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
     // Show delete button
-    if(this.workouts.length === 0){
+    if(this.#workouts.length === 0){
       deleteAllBth.style.opacity = "1";
       deleteAllBth.style.pointerEvents = "all";
       deleteAllBth.style.visibility= "visible";
@@ -187,7 +187,7 @@ class App {
       workout = new Cycling([lat, lng], distance, duration, elevation)
     }
     // Add new obj to workout arr
-    this.workouts.push(workout);
+    this.#workouts.push(workout);
     // Render workout on map as marker
     this._renderWorkoutMarker(workout);
     // Render workout on the list
@@ -234,8 +234,8 @@ class App {
               </div>
         <div class="workout__details">
           <span class="workout__icon">${
-            workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
-          }</span>
+      workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
+    }</span>
           <span class="workout__value">${workout.distance}</span>
           <span class="workout__unit">km</span>
         </div>
@@ -289,7 +289,7 @@ class App {
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
     if (!workoutEl) return;
-    const workout = this.workouts.find(
+    const workout = this.#workouts.find(
       work => work.id === workoutEl.dataset.id
     );
 
@@ -302,15 +302,15 @@ class App {
   }
 
   _setLocaleStorage() {
-    localStorage.setItem('workouts', JSON.stringify(this.workouts));
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
   }
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workouts'));
 
     if (!data) return;
 
-    this.workouts = data;
-    this.workouts.forEach(work => {
+    this.#workouts = data;
+    this.#workouts.forEach(work => {
       this._renderWorkout(work);
     });
 
@@ -339,7 +339,7 @@ class App {
     const workoutKeepBtn = document.querySelector('.keep-workout__btn');
     redactBtn.addEventListener('click',this._redactWorkout.bind(this));
     deleteBtn.addEventListener('click',this._openDeletingWorkoutField.bind(this));
-    workoutDeleteBtn.addEventListener("click",this._deleteWorkout);
+    workoutDeleteBtn.addEventListener("click",this._deleteWorkout.bind(this));
     workoutKeepBtn.addEventListener("click",this._closeDeletingWorkoutField);
   }
   _openDeletingWorkoutField(e){
@@ -357,9 +357,11 @@ class App {
     const workout = e.target.closest(".workout");
     const workoutID = workout.getAttribute("data-id");
     let data = JSON.parse(localStorage.getItem('workouts'));
+    if(!data) return;
     //delete workout from local storage
-    this.workouts = data.filter(workout =>workout.id !== workoutID)
-    localStorage.setItem('workouts', JSON.stringify(this.workouts));
+    this.#workouts = data.filter(workout =>workout.id !== workoutID)
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+    //reload page
     location.reload()
   }
 }
