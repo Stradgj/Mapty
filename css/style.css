@@ -142,6 +142,10 @@ a:visited {
   margin-bottom: 1rem;
 }
 .delete-all__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
   font-family: 'Manrope', sans-serif;
   color: var(--color-light--2);
   font-weight: 400;

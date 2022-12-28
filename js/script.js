@@ -372,6 +372,7 @@ class App {
 
     this.#workouts = data;
     this.#workouts.forEach(work => {
+      work.prototype = Object.create(Workout.prototype);
       this._renderWorkout(work);
     });
 
