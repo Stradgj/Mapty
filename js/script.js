@@ -14,6 +14,7 @@ const deleteAllBth = document.querySelector('.delete-all__btn');
 const deleteField = document.querySelector('.delete-approvement');
 const rejectBth = document.querySelector('.reject');
 const deleteApproveBth = document.querySelector('.delete');
+const selectSort = document.querySelector('.sort-select');
 
 
 class Workout {
@@ -91,6 +92,7 @@ class App {
     deleteAllBth.addEventListener('click', this._showDeleteField);
     deleteApproveBth.addEventListener('click', this._deleteAllWorkouts);
     rejectBth.addEventListener('click', this._showSidebar);
+    selectSort.addEventListener('select', this._sortWorkouts.bind(this))
   }
 
   _getPosition() {
@@ -394,7 +396,6 @@ class App {
     app._showSidebar();
   }
   _bthEventHandler(){
-
     const redactBtn = document.querySelector('.redact__btn');
     const deleteBtn = document.querySelector('.delete__btn');
     const workoutDeleteBtn = document.querySelector('.delete-workout__btn');
@@ -472,6 +473,9 @@ class App {
     localStorage.setItem('workouts', JSON.stringify(this.#workouts));
 
     location.reload()
+  }
+  _sortWorkouts(){
+
   }
 }
 
