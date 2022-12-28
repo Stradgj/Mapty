@@ -32,7 +32,20 @@
   <body>
     <div class="sidebar">
       <img src="img/logo.png" alt="Logo" class="logo" />
-      <div class="delete-all__field">
+      <div class='options__field'>
+        <div class='sort-select__field'>
+          <label class='sort__title' for='sort'>Sort by</label>
+          <select class='sort-select' name='sort' id='sort'>
+            <option value='latest' selected>Latest</option>
+            <option value='type'>Type</option>
+            <option value='distance'>Distance</option>
+            <option value='duration'>Duration</option>
+            <option value='cadence'>Cadence</option>
+            <option value='elevation-gain'>Elevation gain</option>
+            <option value='pace'>Pace</option>
+            <option value='speed'>Speed</option>
+          </select>
+        </div>
         <button class="delete-all__btn">
           Delete all
           <ion-icon class="delete-all__icon" name="trash-outline"></ion-icon>

@@ -135,10 +135,10 @@ a:visited {
 .workout--cycling {
   border-left: 5px solid var(--color-brand--1);
 }
-.delete-all__field {
+.options__field {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 1rem;
 }
 .delete-all__btn {
@@ -148,8 +148,7 @@ a:visited {
   gap: 0.2rem;
   font-family: 'Manrope', sans-serif;
   color: var(--color-light--2);
-  font-weight: 400;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   border: none;
   background: none;
   cursor: pointer;
@@ -157,6 +156,24 @@ a:visited {
   width: 10rem;
   border-radius: 4px;
   transition: 0.3s all;
+}
+.sort-select__field{
+  display: flex;
+  gap: 1rem
+}
+.sort__title{
+  font-size: 1.4rem;
+}
+.sort-select{
+  border: none;
+  background-color: var(--color-dark--2);
+  color: var(--color-light--2);
+  border-radius: 4px;
+  font-size: 1.4rem;
+}
+.sort-select:focus{
+  outline: none;
+  box-shadow: 0 0 0 4px var(--color-light--2);
 }
 .form-details{
   display: flex;
