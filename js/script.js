@@ -5,6 +5,7 @@
 const form = document.querySelector('.form');
 const sidebar = document.querySelector(".sidebar")
 const containerWorkouts = document.querySelector('.workouts');
+const inputForms = document.querySelectorAll('.form__input');
 const inputType = document.querySelector('.form__input--type');
 const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
@@ -14,7 +15,9 @@ const deleteAllBth = document.querySelector('.delete-all__btn');
 const deleteField = document.querySelector('.delete-approvement');
 const rejectBth = document.querySelector('.reject');
 const deleteApproveBth = document.querySelector('.delete');
+const sortField = document.querySelector('.sort-select__field');
 const selectSort = document.querySelector('.sort-select');
+const sortTypes = document.querySelectorAll('.sort-type');
 
 
 class Workout {
@@ -84,6 +87,9 @@ class App {
       deleteAllBth.style.opacity = "0";
       deleteAllBth.style.pointerEvents = "none";
       deleteAllBth.style.visibility= "hidden";
+      sortField.style.opacity = "0";
+      sortField.style.pointerEvents = "none";
+      sortField.style.visibility= "hidden";
     }
     // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
@@ -92,7 +98,7 @@ class App {
     deleteAllBth.addEventListener('click', this._showDeleteField);
     deleteApproveBth.addEventListener('click', this._deleteAllWorkouts);
     rejectBth.addEventListener('click', this._showSidebar);
-    selectSort.addEventListener('select', this._sortWorkouts.bind(this))
+    selectSort.addEventListener('change', this._sortWorkouts.bind(this))
   }
 
   _getPosition() {
@@ -164,6 +170,9 @@ class App {
       deleteAllBth.style.opacity = "1";
       deleteAllBth.style.pointerEvents = "all";
       deleteAllBth.style.visibility= "visible";
+      sortField.style.opacity = "1";
+      sortField.style.pointerEvents = "all";
+      sortField.style.visibility= "visible";
     }
     // If workout running, create running obj
     if (type === 'running') {
@@ -172,8 +181,19 @@ class App {
       if (
         !validInputs(distance, duration, cadence) ||
         !allPositive(distance, duration, cadence)
-      )
-        return alert('Inputs have to be positive numbers');
+      ){
+        inputForms.forEach(inputForm =>{
+          inputForm.style.backgroundColor = 'var(--color-red-1)'
+          setTimeout(function(){
+            inputForm.style.backgroundColor = 'var(--color-light--3)'
+          },150)
+        })
+        form.style.backgroundColor = 'var(--color-red-2)'
+        setTimeout(function(){
+          form.style.backgroundColor = 'var(--color-dark--2)'
+        },150)
+        return
+      }
 
       workout = new Running([lat, lng], distance, duration, cadence);
     }
@@ -255,7 +275,7 @@ class App {
           <div class="workout__details">
             <span class="workout__icon">⚡️</span>
             <span class="workout__value">${workout.pace.toFixed(1)}</span>
-            <span class="workout__unit">min/km</span>
+            <span class="workout__unit">km/min</span>
           </div>
           <div class="workout__details">
             <span class="workout__icon">🦶🏼</span>
@@ -369,7 +389,7 @@ class App {
   }
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workouts'));
-
+    const sortType = localStorage.getItem('selectedSort');
     if (!data) return;
 
     this.#workouts = data;
@@ -377,7 +397,11 @@ class App {
       work.prototype = Object.create(Workout.prototype);
       this._renderWorkout(work);
     });
-
+    sortTypes.forEach(stype =>{
+      if(stype.value === sortType){
+        stype.setAttribute('selected','');
+      }
+    })
   }
   _reset() {
     localStorage.removeItem('workouts');
@@ -475,7 +499,21 @@ class App {
     location.reload()
   }
   _sortWorkouts(){
-
+    const sortType = selectSort.value;
+    sortTypes.forEach(stype => stype.removeAttribute('selected'))
+    this.#workouts = this.#workouts.sort((workout1,workout2) =>{
+      if(workout1[`${sortType}`] < workout2[`${sortType}`]) return -1;
+      if(workout1[`${sortType}`] > workout2[`${sortType}`]) return 1;
+      if(workout1[`${sortType}`] === workout2[`${sortType}`]) return 0;
+    })
+    sortTypes.forEach(stype =>{
+      if(stype.value === sortType){
+        stype.setAttribute('selected','');
+      }
+    })
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+    localStorage.setItem('selectedSort', sortType);
+    location.reload()
   }
 }
 
