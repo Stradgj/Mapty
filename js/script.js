@@ -18,6 +18,7 @@ const deleteApproveBth = document.querySelector('.delete');
 const sortField = document.querySelector('.sort-select__field');
 const selectSort = document.querySelector('.sort-select');
 const sortTypes = document.querySelectorAll('.sort-type');
+const showAllWotkoutsBth = document.querySelector('.show-all-workouts__btn')
 
 
 class Workout {
@@ -99,6 +100,7 @@ class App {
     deleteApproveBth.addEventListener('click', this._deleteAllWorkouts);
     rejectBth.addEventListener('click', this._showSidebar);
     selectSort.addEventListener('change', this._sortWorkouts.bind(this))
+    showAllWotkoutsBth.addEventListener('click',this._showAllWorkouts.bind(this))
   }
 
   _getPosition() {

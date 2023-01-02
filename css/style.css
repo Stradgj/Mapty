@@ -302,7 +302,28 @@ a:visited {
   display: flex;
   align-items: baseline;
 }
-
+.map-buttons-field{
+  position: absolute;
+  display: flex;
+  top: 4rem;
+  right: 4rem;
+  z-index: 1000;
+  gap:1.5rem
+}
+.show-all-workouts__btn{
+  border: none;
+  background-color: var(--color-dark--2);
+  color: var(--color-light--2);
+  padding: 0.5rem 2rem;
+  font-size: 1.4rem;font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.show-all-workouts__btn:hover,.show-all-workouts__btn:active{
+  background-color: var(--color-light--2);
+  color: var(--color-dark--2);
+}
 .workout__icon {
   font-size: 1.8rem;
   margin-right: 0.2rem;
