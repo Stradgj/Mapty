@@ -515,6 +515,37 @@ class App {
     localStorage.setItem('selectedSort', sortType);
     location.reload()
   }
+  _showAllWorkouts(){
+    let minLatitude,maxLatitude,minLongitude,maxLongitude;
+    const avgLatitude = this.#workouts.reduce((acc,workout,)=>{
+      // detecting min and max value
+      if(!minLatitude) minLatitude = workout.coords[0];
+      if(!maxLatitude) maxLatitude = workout.coords[0];
+      if(workout.coords[0] < minLatitude) minLatitude = workout.coords[0]
+      if(workout.coords[0] > maxLatitude) maxLatitude = workout.coords[0]
+
+     return acc+workout.coords[0]
+    },0)/this.#workouts.length;
+
+    const avgLongitude = this.#workouts.reduce((acc,workout,)=>{
+      // detecting min and max value
+      if(!minLongitude) minLongitude = workout.coords[1];
+      if(!maxLongitude) maxLongitude = workout.coords[1];
+      if(workout.coords[1] < minLongitude) minLongitude = workout.coords[1]
+      if(workout.coords[1] > maxLongitude) maxLongitude = workout.coords[1]
+
+      return acc+workout.coords[1]
+    },0)/this.#workouts.length;
+    let avgDifference = ((maxLongitude-minLongitude) + (maxLatitude - minLatitude))/2
+    let zoomLevel;
+    if(avgDifference < 3) zoomLevel = 10;
+    if(avgDifference >= 3 && avgDifference < 10) zoomLevel = 8
+    if(avgDifference >= 10 && avgDifference < 20) zoomLevel = 5;
+    if(avgDifference >= 20 && avgDifference < 40) zoomLevel = 4;
+    if(avgDifference >= 40) zoomLevel = 3;
+    console.log(avgDifference)
+    this.#map.setView([avgLatitude,avgLongitude],zoomLevel)
+  }
 }
 
 const app = new App();
