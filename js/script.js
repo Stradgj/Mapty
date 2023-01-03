@@ -18,7 +18,7 @@ const deleteApproveBth = document.querySelector('.delete');
 const sortField = document.querySelector('.sort-select__field');
 const selectSort = document.querySelector('.sort-select');
 const sortTypes = document.querySelectorAll('.sort-type');
-const showAllWotkoutsBth = document.querySelector('.show-all-workouts__btn')
+const showAllWorkoutsBth = document.querySelector('.show-all-workouts__btn')
 
 
 class Workout {
@@ -91,6 +91,9 @@ class App {
       sortField.style.opacity = "0";
       sortField.style.pointerEvents = "none";
       sortField.style.visibility= "hidden";
+      showAllWorkoutsBth.style.opacity = "0";
+      showAllWorkoutsBth.style.pointerEvents = "none";
+      showAllWorkoutsBth.style.visibility= "hidden";
     }
     // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
@@ -100,7 +103,7 @@ class App {
     deleteApproveBth.addEventListener('click', this._deleteAllWorkouts);
     rejectBth.addEventListener('click', this._showSidebar);
     selectSort.addEventListener('change', this._sortWorkouts.bind(this))
-    showAllWotkoutsBth.addEventListener('click',this._showAllWorkouts.bind(this))
+    showAllWorkoutsBth.addEventListener('click',this._showAllWorkouts.bind(this))
   }
 
   _getPosition() {
@@ -175,6 +178,9 @@ class App {
       sortField.style.opacity = "1";
       sortField.style.pointerEvents = "all";
       sortField.style.visibility= "visible";
+      showAllWorkoutsBth.style.opacity = "1";
+      showAllWorkoutsBth.style.pointerEvents = "all";
+      showAllWorkoutsBth.style.visibility= "visible";
     }
     // If workout running, create running obj
     if (type === 'running') {
@@ -540,12 +546,15 @@ class App {
     },0)/this.#workouts.length;
     let avgDifference = ((maxLongitude-minLongitude) + (maxLatitude - minLatitude))/2
     let zoomLevel;
-    if(avgDifference < 3) zoomLevel = 10;
-    if(avgDifference >= 3 && avgDifference < 10) zoomLevel = 8
+    if(avgDifference <= 0.15) zoomLevel = 13;
+    if(avgDifference <= 0.25  && avgDifference > 0.15) zoomLevel = 12;
+    if(avgDifference <= 0.5  && avgDifference > 0.25) zoomLevel = 11;
+    if(avgDifference <= 1 && avgDifference > 0.5) zoomLevel = 10;
+    if(avgDifference < 3 && avgDifference > 1) zoomLevel = 9;
+    if(avgDifference >= 3 && avgDifference < 10) zoomLevel = 7
     if(avgDifference >= 10 && avgDifference < 20) zoomLevel = 5;
     if(avgDifference >= 20 && avgDifference < 40) zoomLevel = 4;
     if(avgDifference >= 40) zoomLevel = 3;
-    console.log(avgDifference)
     this.#map.setView([avgLatitude,avgLongitude],zoomLevel)
   }
 }
