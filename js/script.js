@@ -550,11 +550,11 @@ class App {
     if(avgDifference <= 0.25  && avgDifference > 0.15) zoomLevel = 12;
     if(avgDifference <= 0.5  && avgDifference > 0.25) zoomLevel = 11;
     if(avgDifference <= 1 && avgDifference > 0.5) zoomLevel = 10;
-    if(avgDifference < 3 && avgDifference > 1) zoomLevel = 9;
-    if(avgDifference >= 3 && avgDifference < 10) zoomLevel = 7
-    if(avgDifference >= 10 && avgDifference < 20) zoomLevel = 5;
-    if(avgDifference >= 20 && avgDifference < 40) zoomLevel = 4;
-    if(avgDifference >= 40) zoomLevel = 3;
+    if(avgDifference <= 3 && avgDifference > 1) zoomLevel = 9;
+    if(avgDifference <= 10 &&avgDifference > 3) zoomLevel = 7
+    if( avgDifference <= 20 && avgDifference > 10 ) zoomLevel = 5;
+    if(avgDifference <= 40 && avgDifference > 20 ) zoomLevel = 4;
+    if(avgDifference > 40) zoomLevel = 3;
     this.#map.setView([avgLatitude,avgLongitude],zoomLevel)
   }
 }
