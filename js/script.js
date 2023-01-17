@@ -18,7 +18,7 @@ const deleteApproveBth = document.querySelector('.delete');
 const sortField = document.querySelector('.sort-select__field');
 const selectSort = document.querySelector('.sort-select');
 const sortTypes = document.querySelectorAll('.sort-type');
-const showAllWorkoutsBth = document.querySelector('.show-all-workouts__btn')
+const showAllWorkoutsBtn = document.querySelector('.show-all-workouts__btn')
 
 
 class Workout {
@@ -85,15 +85,9 @@ class App {
     this._getLocalStorage();
 
     if(this.#workouts.length === 0){
-      deleteAllBth.style.opacity = "0";
-      deleteAllBth.style.pointerEvents = "none";
-      deleteAllBth.style.visibility= "hidden";
-      sortField.style.opacity = "0";
-      sortField.style.pointerEvents = "none";
-      sortField.style.visibility= "hidden";
-      showAllWorkoutsBth.style.opacity = "0";
-      showAllWorkoutsBth.style.pointerEvents = "none";
-      showAllWorkoutsBth.style.visibility= "hidden";
+      this._hideElement(deleteAllBth)
+      this._hideElement(sortField)
+      this._hideElement(showAllWorkoutsBtn)
     }
     // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
@@ -103,7 +97,7 @@ class App {
     deleteApproveBth.addEventListener('click', this._deleteAllWorkouts);
     rejectBth.addEventListener('click', this._showSidebar);
     selectSort.addEventListener('change', this._sortWorkouts.bind(this))
-    showAllWorkoutsBth.addEventListener('click',this._showAllWorkouts.bind(this))
+    showAllWorkoutsBtn.addEventListener('click',this._showAllWorkouts.bind(this))
   }
 
   _getPosition() {
@@ -172,15 +166,9 @@ class App {
     let workout;
     // Show delete button
     if(this.#workouts.length === 0){
-      deleteAllBth.style.opacity = "1";
-      deleteAllBth.style.pointerEvents = "all";
-      deleteAllBth.style.visibility= "visible";
-      sortField.style.opacity = "1";
-      sortField.style.pointerEvents = "all";
-      sortField.style.visibility= "visible";
-      showAllWorkoutsBth.style.opacity = "1";
-      showAllWorkoutsBth.style.pointerEvents = "all";
-      showAllWorkoutsBth.style.visibility= "visible";
+      this._showElement(deleteAllBth)
+      this._showElement(sortField)
+      this._showElement(showAllWorkoutsBtn)
     }
     // If workout running, create running obj
     if (type === 'running') {
@@ -369,7 +357,7 @@ class App {
     html+=` <div class='workout-delete__field'>
             <h2 class='workout-delete__title'>You're going to delete this workout</h2>
             <button class='delete-workout__btn'>Delete</button>
-            <button class='keep-workout__btn'>Reject</button>
+            <button class='keep-workout__btn'>Save</button>
           </div>
         </li>`
 
@@ -524,38 +512,18 @@ class App {
     location.reload()
   }
   _showAllWorkouts(){
-    let minLatitude,maxLatitude,minLongitude,maxLongitude;
-    const avgLatitude = this.#workouts.reduce((acc,workout,)=>{
-      // detecting min and max value
-      if(!minLatitude) minLatitude = workout.coords[0];
-      if(!maxLatitude) maxLatitude = workout.coords[0];
-      if(workout.coords[0] < minLatitude) minLatitude = workout.coords[0]
-      if(workout.coords[0] > maxLatitude) maxLatitude = workout.coords[0]
-
-     return acc+workout.coords[0]
-    },0)/this.#workouts.length;
-
-    const avgLongitude = this.#workouts.reduce((acc,workout,)=>{
-      // detecting min and max value
-      if(!minLongitude) minLongitude = workout.coords[1];
-      if(!maxLongitude) maxLongitude = workout.coords[1];
-      if(workout.coords[1] < minLongitude) minLongitude = workout.coords[1]
-      if(workout.coords[1] > maxLongitude) maxLongitude = workout.coords[1]
-
-      return acc+workout.coords[1]
-    },0)/this.#workouts.length;
-    let avgDifference = ((maxLongitude-minLongitude) + (maxLatitude - minLatitude))/2
-    let zoomLevel;
-    if(avgDifference <= 0.15) zoomLevel = 13;
-    if(avgDifference <= 0.25  && avgDifference > 0.15) zoomLevel = 12;
-    if(avgDifference <= 0.5  && avgDifference > 0.25) zoomLevel = 11;
-    if(avgDifference <= 1 && avgDifference > 0.5) zoomLevel = 10;
-    if(avgDifference <= 3 && avgDifference > 1) zoomLevel = 9;
-    if(avgDifference <= 10 &&avgDifference > 3) zoomLevel = 7
-    if( avgDifference <= 20 && avgDifference > 10 ) zoomLevel = 5;
-    if(avgDifference <= 40 && avgDifference > 20 ) zoomLevel = 4;
-    if(avgDifference > 40) zoomLevel = 3;
-    this.#map.setView([avgLatitude,avgLongitude],zoomLevel)
+    const coords = this.#workouts.map(workout => workout.coords);
+    this.#map.fitBounds(coords);
+  }
+  _showElement(el){
+    el.style.opacity = "1";
+    el.style.pointerEvents = "all";
+    el.style.visibility= "visible";
+  }
+  _hideElement(el){
+    el.style.opacity = "0";
+    el.style.pointerEvents = "none";
+    el.style.visibility= "hidden";
   }
 }
 
