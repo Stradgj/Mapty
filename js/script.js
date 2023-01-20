@@ -61,7 +61,7 @@ class Running extends Workout {
 class Cycling extends Workout {
   type = 'cycling';
   constructor(coords, distance, duration, elevationGain,weather,location) {
-    super(coords, distance, duration,weather,location);
+    super(coords, distance, duration,location,weather);
     this.elevationGain = elevationGain;
     this.calcSpeed();
     this._setDescription();
@@ -153,72 +153,88 @@ class App {
   }
 
   async _newWorkout(e) {
+    try{
+      e.preventDefault();
+      const validInputs = (...inputs) =>
+        inputs.every(inp => Number.isFinite(inp));
 
-    e.preventDefault();
-    const validInputs = (...inputs) =>
-      inputs.every(inp => Number.isFinite(inp));
-
-    const allPositive = (...inputs) => inputs.every(inp => inp > 0);
+      const allPositive = (...inputs) => inputs.every(inp => inp > 0);
 
 
-    // Get data from the form
-    const type = inputType.value;
-    const distance = +inputDistance.value;
-    const duration = +inputDuration.value;
-    const { lat, lng } = this.#mapEvent.latlng;
-    const weather = await this._getWeather(lat,lng);
-    const location = await this._getLocation(lat,lng);
-    let workout;
-    // Show delete button
-    if(this.#workouts.length === 0){
-      this._showElement(deleteAllBth)
-      this._showElement(sortField)
-      this._showElement(showAllWorkoutsBtn)
-    }
-    // If workout running, create running obj
-    if (type === 'running') {
-      const cadence = +inputCadence.value;
-      // Check if data is valid
-      if (
-        !validInputs(distance, duration, cadence) ||
-        !allPositive(distance, duration, cadence)
-      ){
-        inputForms.forEach(inputForm =>{
-          inputForm.style.backgroundColor = 'var(--color-red-1)'
-          setTimeout(function(){
-            inputForm.style.backgroundColor = 'var(--color-light--3)'
-          },150)
-        })
-        form.style.backgroundColor = 'var(--color-red-2)'
-        setTimeout(function(){
-          form.style.backgroundColor = 'var(--color-dark--2)'
-        },150)
-        return
+      // Get data from the form
+      const type = inputType.value;
+      const distance = +inputDistance.value;
+      const duration = +inputDuration.value;
+      const { lat, lng } = this.#mapEvent.latlng;
+      const weather = await this._getWeather(lat,lng);
+      const location = await this._getLocation(lat,lng);
+      let workout;
+      // Show delete button
+      if(this.#workouts.length === 0){
+        this._showElement(deleteAllBth)
+        this._showElement(sortField)
+        this._showElement(showAllWorkoutsBtn)
       }
+      // If workout running, create running obj
+      if (type === 'running') {
+        const cadence = +inputCadence.value;
+        // Check if data is valid
+        if (
+          !validInputs(distance, duration, cadence) ||
+          !allPositive(distance, duration, cadence)
+        ){
+          inputForms.forEach(inputForm =>{
+            inputForm.style.backgroundColor = 'var(--color-red-1)'
+            setTimeout(function(){
+              inputForm.style.backgroundColor = 'var(--color-light--3)'
+            },150)
+          })
+          form.style.backgroundColor = 'var(--color-red-2)'
+          setTimeout(function(){
+            form.style.backgroundColor = 'var(--color-dark--2)'
+          },150)
+          return
+        }
 
-      workout = new Running([lat, lng], distance, duration, cadence,weather,location);
-    }
-    // If workout cycling, create cycling obj
-    if (type === 'cycling') {
-      const elevation = +inputElevation.value;
-      if (
-        !validInputs(distance, duration, elevation) ||
-        !allPositive(distance, duration, elevation)
-      )
-        return alert('Inputs have to be positive numbers');
+        workout = new Running([lat, lng], distance, duration, cadence,weather,location);
+      }
+      // If workout cycling, create cycling obj
+      if (type === 'cycling') {
+        const elevation = +inputElevation.value;
+        if (
+          !validInputs(distance, duration, elevation) ||
+          !allPositive(distance, duration, elevation)
+        ) {
+          inputForms.forEach(inputForm => {
+            inputForm.style.backgroundColor = 'var(--color-red-1)'
+            setTimeout(function() {
+              inputForm.style.backgroundColor = 'var(--color-light--3)'
+            }, 150)
+          })
+          form.style.backgroundColor = 'var(--color-red-2)'
+          setTimeout(function() {
+            form.style.backgroundColor = 'var(--color-dark--2)'
+          }, 150)
+          return
+        }
 
-      workout = new Cycling([lat, lng], distance, duration, elevation,weather,location)
+        workout = new Cycling([lat, lng], distance, duration, elevation, weather, location)
+
+      }
+      // Add new obj to workout arr
+      this.#workouts.push(workout);
+      // Render workout on map as marker
+      this._renderWorkoutMarker(workout);
+      // Render workout on the list
+      this._renderWorkout(workout);
+      // Hide form + clear input fields
+      this._hideForm();
+      // Set local storage to all workouts
+      this._setLocaleStorage();
+    }catch(err){
+      console.error(err)
+      alert(`Cant create a workout: ${err.message}`)
     }
-    // Add new obj to workout arr
-    this.#workouts.push(workout);
-    // Render workout on map as marker
-    this._renderWorkoutMarker(workout);
-    // Render workout on the list
-    this._renderWorkout(workout);
-    // Hide form + clear input fields
-    this._hideForm();
-    // Set local storage to all workouts
-    this._setLocaleStorage();
   }
 
   _renderWorkoutMarker(workout) {
@@ -257,7 +273,7 @@ class App {
                   ></ion-icon>
                 </button>
               </div>
-        <h2 class="workout__title">${workout.type[0].toUpperCase() + workout.type.slice(1) }, in ${workout.location}</h2>
+        <h2 class="workout__title">${workout.type[0].toUpperCase() + workout.type.slice(1) } in ${workout.location}</h2>
         <div class="workout__details">
           <span class="workout__icon">${
       workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
