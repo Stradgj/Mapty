@@ -317,7 +317,7 @@ class App {
                 ></ion-icon>
               </button>
             </div>
-            <h2 class="workout__title">${workout.description}</h2>
+            <h2 class="workout__title">${workout.type[0].toUpperCase() + workout.type.slice(1) } in ${workout.location}</h2>
             <div class="form-details">
               <label class='redact-label'>🏃‍♂️</label>
               <input class='redact-input distance-form' placeholder='km' value='${workout.distance}'>
@@ -362,7 +362,7 @@ class App {
                 ></ion-icon>
               </button>
             </div>
-            <h2 class="workout__title">${workout.description}</h2>
+            <h2 class="workout__title">${workout.type[0].toUpperCase() + workout.type.slice(1) } in ${workout.location}</h2>
             <div class="form-details">
               <label class='redact-label'>🏃‍♂️</label>
               <input class='redact-input distance-form' placeholder='km' value='${workout.distance}'>
