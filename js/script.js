@@ -100,7 +100,6 @@ class App {
     rejectBth.addEventListener('click', this._showSidebar);
     selectSort.addEventListener('change', this._sortWorkouts.bind(this))
     showAllWorkoutsBtn.addEventListener('click',this._showAllWorkouts.bind(this))
-
   }
 
   _getPosition() {
@@ -166,8 +165,6 @@ class App {
       const distance = +inputDistance.value;
       const duration = +inputDuration.value;
       const { lat, lng } = this.#mapEvent.latlng;
-      const weather = await this._getWeather(lat,lng);
-      const location = await this._getLocation(lat,lng);
       let workout;
       // Show delete button
       if(this.#workouts.length === 0){
@@ -195,7 +192,9 @@ class App {
           },150)
           return
         }
-
+        const weather = await this._getWeather(lat,lng);
+        const location = await this._getLocation(lat,lng);
+        
         workout = new Running([lat, lng], distance, duration, cadence,weather,location);
       }
       // If workout cycling, create cycling obj
